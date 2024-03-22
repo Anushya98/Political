@@ -4,6 +4,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import baseurl from '../Api/baseurl'; // Assuming baseurl is the correct path to your API base URL
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Card = ({ person, index, onLongPress }) => (
     <TouchableOpacity onLongPress={() => onLongPress(person)}>
@@ -57,42 +58,58 @@ const UnallotedScreen = () => {
     const [votersData, setVotersData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const cardsPerPage = 100;
-
     const navigation = useNavigation();
-
+    // Fetch data on component mount or when currentPage, searchQuery, or selectedAgeFilter changes
     useEffect(() => {
         fetchData();
-    }, [currentPage]); // Update data when currentPage changes
+    }, [currentPage, searchQuery, selectedAgeFilter]);
 
     const fetchData = async () => {
         try {
+            // Retrieve access token from AsyncStorage
+            const accessToken = await AsyncStorage.getItem('access_token');
+    
+            // Set headers for the request with the retrieved access token
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            };
+    
+            // Make a GET request with the configured headers
             const response = await baseurl.get('/voters_details', {
                 params: {
                     limit: cardsPerPage,
                     offset: (currentPage - 1) * cardsPerPage,
-                }
+                    name: searchQuery,
+                    age: selectedAgeFilter
+                },
+                headers: config.headers // Include headers in the request
             });
+    
             console.log('Fetched voters data:', response.data);
             setVotersData(response.data); // Update voters data with the fetched data
         } catch (error) {
             console.error('Error fetching data:', error);
+            // Handle error
         }
     };
-
     const handleSearch = (query) => {
         setSearchQuery(query);
         setCurrentPage(1); // Reset page to 1 when search query changes
     };
 
+    // Handler for age filter change
     const handleAgeFilterChange = (value) => {
         setSelectedAgeFilter(value);
         setCurrentPage(1); // Reset page to 1 when age filter changes
     };
 
     const handleCardLongPress = (person) => {
-    console.log('Long pressed:', person);
-    navigation.navigate('DetailsScreen', { person: person }); // Make sure 'person' is correctly passed
-};
+        console.log('Long pressed:', person);
+        navigation.navigate('DetailsScreen', { person: person }); // Make sure 'person' is correctly passed
+    };
 
 
     const handlePrevPage = () => {

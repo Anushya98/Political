@@ -9,6 +9,12 @@ const HomePage = () => {
     const handleVoterDetailsPress = () => {
         navigation.navigate('MainPage'); // Navigate to MainPage when "Voter Details" is pressed
     };
+    const handleCanvassingDetailsPress = () => {
+        navigation.navigate('Canvassing'); // Navigate to MainPage when "Voter Details" is pressed
+    };
+    const handleEventsPress = () => {
+        navigation.navigate('Events'); // Navigate to MainPage when "Voter Details" is pressed
+    };
 
     return (
         <View style={styles.container}>
@@ -50,11 +56,11 @@ const HomePage = () => {
                         <Image source={require('../assets/pdf-send-portable-digital-file-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Polling Booth PDF Update</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonCard}>
+                    <TouchableOpacity style={styles.buttonCard} onPress={handleCanvassingDetailsPress}>
                         <Image source={require('../assets/illustration-of-handshake-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Canvassing</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonCard}>
+                    <TouchableOpacity style={styles.buttonCard} onPress={handleEventsPress}>
                         <Image source={require('../assets/event-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Event</Text>
                     </TouchableOpacity>
