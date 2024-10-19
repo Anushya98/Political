@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import baseurl from '../Api/baseurl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-const CreateEventPage = ({ onClose }) => {
+const CreateEventPage = () => {
+    const navigation = useNavigation(); // Initialize navigation
+
     const [places, setPlaces] = useState([]);
     const [newPlace, setNewPlace] = useState('');
     const [startTime, setStartTime] = useState('');
@@ -19,6 +24,80 @@ const CreateEventPage = ({ onClose }) => {
     const [isStartTimePickerVisible, setStartTimePickerVisibility] = useState(false); // State variable for start time picker visibility
     const [isEndTimePickerVisible, setEndTimePickerVisibility] = useState(false); // State variable for end time picker visibility
 
+    const handleUpdateEvent = async () => {
+        try {
+            const token = await AsyncStorage.getItem('access_token');
+
+            // Combine new values with existing values for coordinator numbers, assembling points, and places
+            const updatedCoordinatorNumbers = [...coordinatorNumbers];
+            if (newCoordinatorNumber.trim() !== '') {
+                updatedCoordinatorNumbers.push(newCoordinatorNumber);
+            }
+
+            const updatedAssemblingPoints = [...assemblingPoints];
+            if (newAssemblingPoint.trim() !== '') {
+                updatedAssemblingPoints.push(newAssemblingPoint);
+            }
+
+            const updatedPlaces = [...places];
+            if (newPlace.trim() !== '') {
+                updatedPlaces.push(newPlace);
+            }
+
+            // Prepare the event data
+            const eventData = {
+                canvassing_place: updatedPlaces,
+                starting_time: selectedStartTime,
+                ending_time: selectedEndTime,
+                coordinator_number: updatedCoordinatorNumbers,
+                assembling_point: updatedAssemblingPoints,
+                canvassing_date: selectedDate
+            };
+
+            console.log('Request Payload:', eventData); // Log request payload
+
+            // Make a POST request to create the event
+            const response = await baseurl.post('/event', eventData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Event created successfully:', response.data);
+            // Handle the success response, e.g., show a success message
+            Alert.alert('Success', 'Event created successfully', [
+                { text: 'OK', onPress: () => resetForm() }
+            ]);
+        } catch (error) {
+            console.error('Error creating event:', error);
+            // Handle the error, e.g., show an error message
+            Alert.alert('Error', 'Failed to create event. Please try again.');
+        }
+    };
+
+    // Function to reset the form to its initial state
+    const resetForm = () => {
+        setPlaces([]);
+        setNewPlace('');
+        setStartTime('');
+        setEndTime('');
+        setCoordinatorNumbers([]);
+        setNewCoordinatorNumber('');
+        setAssemblingPoints([]);
+        setNewAssemblingPoint('');
+        setSelectedDate(null);
+        setSelectedStartTime(null);
+        setSelectedEndTime(null);
+        setDatePickerVisibility(false);
+        setStartTimePickerVisibility(false);
+        setEndTimePickerVisibility(false);
+    };
+
+
+    const handleClosePage = () => {
+        navigation.goBack(); // Navigate back to the previous screen
+    };
 
     const addPlace = () => {
         if (newPlace.trim() !== '') {
@@ -108,7 +187,7 @@ const CreateEventPage = ({ onClose }) => {
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={onClose} style={styles.backIcon}>
+                <TouchableOpacity onPress={handleClosePage} style={styles.backIcon}>
                     <Icon name="close" size={24} color="#ffffff" />
                 </TouchableOpacity>
                 <Text style={styles.headerText}>Create Event</Text>
@@ -233,10 +312,10 @@ const CreateEventPage = ({ onClose }) => {
 
                     {/* Update and Close Buttons */}
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity onPress={handleUpdateEvent} style={styles.button}>
                             <Text style={styles.buttonText}>Update</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={onClose} style={[styles.button, styles.closeButton]}>
+                        <TouchableOpacity onPress={handleClosePage} style={[styles.button, styles.closeButton]}>
                             <Text style={[styles.buttonText, styles.closeButtonText]}>Close</Text>
                         </TouchableOpacity>
                     </View>

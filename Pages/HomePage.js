@@ -15,6 +15,12 @@ const HomePage = () => {
     const handleEventsPress = () => {
         navigation.navigate('Events'); // Navigate to MainPage when "Voter Details" is pressed
     };
+    const handleInchargePress = () => {
+        navigation.navigate('Incharge'); // Navigate to MainPage when "Voter Details" is pressed
+    };
+    const handleInformationPress = () => {
+        navigation.navigate('Information'); // Navigate to MainPage when "Voter Details" is pressed
+    };
 
     return (
         <View style={styles.container}>
@@ -48,7 +54,7 @@ const HomePage = () => {
                         <Text style={styles.buttonText}>Voter Details</Text>
                     </TouchableOpacity>
                     {/* Repeat this TouchableOpacity pattern for other buttons */}
-                    <TouchableOpacity style={styles.buttonCard}>
+                    <TouchableOpacity style={styles.buttonCard} onPress={handleInchargePress}>
                         <Image source={require('../assets/person-rotation-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Incharge</Text>
                     </TouchableOpacity>
@@ -64,7 +70,7 @@ const HomePage = () => {
                         <Image source={require('../assets/event-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonCard}>
+                    <TouchableOpacity style={styles.buttonCard} onPress={handleInformationPress}>
                         <Image source={require('../assets/information-circle-svgrepo-com.png')} style={[styles.buttonImage, { tintColor: '#41A4E6' }]} />
                         <Text style={styles.buttonText}>Information</Text>
                     </TouchableOpacity>

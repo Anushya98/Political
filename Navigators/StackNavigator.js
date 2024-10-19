@@ -17,6 +17,8 @@ import SignUpScreen from '../Pages/SignUpPage';
 import CanvassingPage from '../Screens/CanvassingScreen';
 import EventScreen from '../Screens/EventScreen';
 import CreateEventPage from '../Screens/CreateEventpage';
+import InchargeScreen from '../Screens/InchargeScreen';
+import InformationScreen from '../Screens/InformationScreen';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +46,8 @@ const StackNavigator = () => {
             <Stack.Screen name="Canvassing" component={CanvassingPage} />
             <Stack.Screen name="Events" component={EventScreen} />
             <Stack.Screen name="CreateEvent" component={CreateEventPage} />
+            <Stack.Screen name="Incharge" component={InchargeScreen} />
+            <Stack.Screen name="Information" component={InformationScreen} />
 
 
         </Stack.Navigator>
