@@ -59,58 +59,60 @@ const UnallotedScreen = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const cardsPerPage = 100;
     const navigation = useNavigation();
-    // Fetch data on component mount or when currentPage, searchQuery, or selectedAgeFilter changes
+
     useEffect(() => {
         fetchData();
     }, [currentPage, searchQuery, selectedAgeFilter]);
 
     const fetchData = async () => {
         try {
-            // Retrieve access token from AsyncStorage
             const accessToken = await AsyncStorage.getItem('access_token');
-    
-            // Set headers for the request with the retrieved access token
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                }
+                    'Authorization': `Bearer ${accessToken}`,
+                },
             };
-    
-            // Make a GET request with the configured headers
+
             const response = await baseurl.get('/voters_details', {
                 params: {
                     limit: cardsPerPage,
                     offset: (currentPage - 1) * cardsPerPage,
                     name: searchQuery,
-                    age: selectedAgeFilter
+                    age: selectedAgeFilter,
                 },
-                headers: config.headers // Include headers in the request
+                headers: config.headers,
             });
-    
-            console.log('Fetched voters data:', response.data);
-            setVotersData(response.data); // Update voters data with the fetched data
+
+            const data = response.data;
+            console.log('Fetched voters data:', data);
+
+            if (Array.isArray(data)) {
+                setVotersData(data);
+            } else if (data && Array.isArray(data.voters)) {
+                setVotersData(data.voters);
+            } else {
+                setVotersData([]);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
-            // Handle error
         }
     };
+
     const handleSearch = (query) => {
         setSearchQuery(query);
-        setCurrentPage(1); // Reset page to 1 when search query changes
+        setCurrentPage(1);
     };
 
-    // Handler for age filter change
     const handleAgeFilterChange = (value) => {
         setSelectedAgeFilter(value);
-        setCurrentPage(1); // Reset page to 1 when age filter changes
+        setCurrentPage(1);
     };
 
     const handleCardLongPress = (person) => {
         console.log('Long pressed:', person);
-        navigation.navigate('DetailsScreen', { person: person }); // Make sure 'person' is correctly passed
+        navigation.navigate('DetailsScreen', { person });
     };
-
 
     const handlePrevPage = () => {
         if (currentPage > 1) {
@@ -124,9 +126,11 @@ const UnallotedScreen = () => {
         }
     };
 
+    const totalPersons = Array.isArray(votersData)
+        ? votersData.reduce((acc, voter) => acc + (Array.isArray(voter.Persons) ? voter.Persons.length : 0), 0)
+        : 0;
 
-    // Calculate total pages based on the total number of persons
-    const totalPages = Math.ceil(votersData.reduce((acc, voter) => acc + voter.Persons.length, 0) / cardsPerPage);
+    const totalPages = Math.ceil(totalPersons / cardsPerPage);
 
     return (
         <View style={styles.container}>

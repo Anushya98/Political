@@ -10,7 +10,7 @@ const EventScreen = () => {
 
     const [yesButtonPressed, setYesButtonPressed] = useState(false);
     const [noButtonPressed, setNoButtonPressed] = useState(false);
-    const [influencerData, setInfluencerData] = useState(null);
+    const [influencerData, setInfluencerData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const handleCreateEvent = () => {
@@ -76,7 +76,7 @@ const EventScreen = () => {
                 <View style={styles.blueLine} />
             </View>
 
-             <TouchableOpacity onPress={handleCreateEvent} style={styles.createEventButton}>
+            <TouchableOpacity onPress={handleCreateEvent} style={styles.createEventButton}>
                 <Icon name="add" size={24} color="#fff" style={styles.plusIcon} />
                 <Text style={styles.createEventButtonText}>Create Event</Text>
             </TouchableOpacity>
@@ -85,90 +85,95 @@ const EventScreen = () => {
                 {/* Render influencer data */}
                 {loading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
-                ) : influencerData.map((influencer, index) => (
-                    <View key={index} style={styles.card}>
-                        {/* Serial Number and Voter ID */}
-                        <View style={styles.cardTopRow}>
-                            <View style={styles.serialNumberContainer}>
-                                <Text style={styles.serialNumber}> {influencer.SerialNuber}</Text>
+                ) : influencerData.length > 0 ? (
+                    influencerData.map((influencer, index) => (
+                        <View key={index} style={styles.card}>
+                            {/* Serial Number and Voter ID */}
+                            <View style={styles.cardTopRow}>
+                                <View style={styles.serialNumberContainer}>
+                                    <Text style={styles.serialNumber}>{influencer.SerialNumber}</Text>
+                                </View>
+                                <View style={styles.voterIdContainer}>
+                                    <Text style={styles.voterId}>Voter ID: {influencer.ID}</Text>
+                                </View>
                             </View>
-                            <View style={styles.voterIdContainer}>
-                                <Text style={styles.voterId}>Voter ID: {influencer.ID}</Text>
-                            </View>
-                        </View>
 
-                        <View style={styles.cardContent}>
-                            <View style={styles.infoContainer}>
-                                <View style={styles.infoRow}>
-                                    <Text style={styles.label}>Name:</Text>
-                                    <Text style={styles.info}>{influencer.Name}</Text>
+                            <View style={styles.cardContent}>
+                                <View style={styles.infoContainer}>
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.label}>Name:</Text>
+                                        <Text style={styles.info}>{influencer.Name}</Text>
+                                    </View>
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.label}>Father's Name:</Text>
+                                        <Text style={[styles.info, styles.Container]}>{influencer['Husband/Father/Mother Name/Other']}</Text>
+                                    </View>
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.label}>Door Number:</Text>
+                                        <Text style={styles.info}>{influencer['House Number']}</Text>
+                                    </View>
+                                    <View style={styles.infoRow}>
+                                        <Text style={styles.label}>Address:</Text>
+                                        <Text style={[styles.info, styles.Container]}>{influencer.Address ? influencer.Address.SectionName : ''}</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.infoRow}>
-                                    <Text style={styles.label}>Father's Name:</Text>
-                                    <Text style={[styles.info, styles.Container]}>{influencer['Husband/Father/Mother Name/Other']}</Text>
-                                </View>
-                                <View style={styles.infoRow}>
-                                    <Text style={styles.label}>Door Number:</Text>
-                                    <Text style={styles.info}>{influencer['House Number']}</Text>
-                                </View>
-                                <View style={styles.infoRow}>
-                                    <Text style={styles.label}>Address:</Text>
-                                    <Text style={[styles.info, styles.Container]}>{influencer.Address ? influencer.Address.SectionName : ''}</Text>
+                                <View style={styles.rightContent}>
+                                    <View style={styles.photoContainer}>
+                                        {/* Placeholder for photo */}
+                                    </View>
                                 </View>
                             </View>
-                            <View style={styles.rightContent}>
-                                <View style={styles.photoContainer}>
-                                    {/* Placeholder for photo */}
+                            {/* Age and Gender */}
+                            <View style={styles.bottomRow}>
+                                <Text style={styles.label}>Age: {influencer.Age}</Text>
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.label}>Gender:</Text>
+                                    <Text style={styles.gender}>{influencer.Gender}</Text>
                                 </View>
                             </View>
-                        </View>
-                        {/* Age and Gender */}
-                        <View style={styles.bottomRow}>
-                            <Text style={styles.label}>Age: {influencer.Age}</Text>
-                            <View style={styles.infoRow}>
-                                <Text style={styles.label}>Gender:</Text>
-                                <Text style={styles.gender}>{influencer.Gender}</Text>
+                            {/* Yes/No Buttons */}
+                            <View style={styles.buttonContainer}>
+                                <TouchableHighlight
+                                    onPress={handleYesPress}
+                                    style={[styles.button, yesButtonPressed ? styles.buttonActive : styles.buttonInactive]}
+                                    underlayColor="#007bff"
+                                >
+                                    <Text style={[styles.buttonText, yesButtonPressed ? styles.buttonTextActive : null]}>Yes</Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={handleNoPress}
+                                    style={[styles.button, noButtonPressed ? styles.buttonActive : styles.buttonInactive]}
+                                    underlayColor="#007bff"
+                                >
+                                    <Text style={[styles.buttonText, noButtonPressed ? styles.buttonTextActive : null]}>No</Text>
+                                </TouchableHighlight>
                             </View>
-                        </View>
-                        {/* Yes/No Buttons */}
-                        <View style={styles.buttonContainer}>
-                            <TouchableHighlight
-                                onPress={handleYesPress}
-                                style={[styles.button, yesButtonPressed ? styles.buttonActive : styles.buttonInactive]}
-                                underlayColor="#007bff"
-                            >
-                                <Text style={[styles.buttonText, yesButtonPressed ? styles.buttonTextActive : null]}>Yes</Text>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                onPress={handleNoPress}
-                                style={[styles.button, noButtonPressed ? styles.buttonActive : styles.buttonInactive]}
-                                underlayColor="#007bff"
-                            >
-                                <Text style={[styles.buttonText, noButtonPressed ? styles.buttonTextActive : null]}>No</Text>
-                            </TouchableHighlight>
-                        </View>
 
 
-                        {/* 5 Other Buttons */}
-                        <View style={styles.otherButtonContainer}>
-                            <TouchableOpacity onPress={() => console.log('Button 1')} style={styles.otherButton}>
-                                <Text style={styles.OtherbuttonText}>Ok</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => console.log('Button 2')} style={styles.otherButton}>
-                                <Text style={styles.OtherbuttonText}>Opposite Party</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => console.log('Button 3')} style={styles.otherButton}>
-                                <Text style={styles.OtherbuttonText}>Not Available</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => console.log('Button 4')} style={styles.otherButton}>
-                                <Text style={styles.OtherbuttonText}>Neutral</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => console.log('Button 5')} style={styles.otherButton}>
-                                <Text style={styles.OtherbuttonText}>Need more visit</Text>
-                            </TouchableOpacity>
+
+                            {/* 5 Other Buttons */}
+                            <View style={styles.otherButtonContainer}>
+                                <TouchableOpacity onPress={() => console.log('Button 1')} style={styles.otherButton}>
+                                    <Text style={styles.OtherbuttonText}>Ok</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => console.log('Button 2')} style={styles.otherButton}>
+                                    <Text style={styles.OtherbuttonText}>Opposite Party</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => console.log('Button 3')} style={styles.otherButton}>
+                                    <Text style={styles.OtherbuttonText}>Not Available</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => console.log('Button 4')} style={styles.otherButton}>
+                                    <Text style={styles.OtherbuttonText}>Neutral</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => console.log('Button 5')} style={styles.otherButton}>
+                                    <Text style={styles.OtherbuttonText}>Need more visit</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                ))}
+                    ))
+                ) : (
+                    <Text style={styles.noDataText}>No influencers found.</Text>
+                )}
             </ScrollView>
         </View >
     );
@@ -237,7 +242,7 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         paddingHorizontal: 20,
-        paddingVertical:5,
+        paddingVertical: 5,
     },
     card: {
         backgroundColor: '#ffffff',

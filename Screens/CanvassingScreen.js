@@ -5,11 +5,14 @@ import baseurl from '../Api/baseurl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native'
 
-const CanvassingPage = (navigation) => {
+
+const CanvassingPage = () => { // Removed navigation parameter
     const [yesButtonPressed, setYesButtonPressed] = useState(false);
     const [noButtonPressed, setNoButtonPressed] = useState(false);
     const [influencerData, setInfluencerData] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const navigation = useNavigation(); // Use the useNavigation hook
 
     useEffect(() => {
         fetchInfluencerData();
